@@ -1,0 +1,67 @@
+$font_size: 16px;
+$letter_spacing: 1px;
+$line_height: 1.2;
+$base_lineHeight: 10px;
+
+@mixin font($size: 1, $weight: 400) {
+    $font_level: $size * $font_size;
+    font-size: $font_level;
+    letter-spacing: $size * $letter_spacing;
+    line-height: ceil($font_level * $line_height / $base_lineHeight) * $base_lineHeight;
+    font-weight: $weight;
+}
+//positionCenter->正中間 positionCenter(x)->水平置中, positionCenter(y)->垂直置中
+@mixin positionCenter($type: null) {
+    position: absolute;
+    @if ($type == "x") {
+      left: 50%;
+      transform: translateX(-50%);
+    } @else if($type == "y") {
+      top: 50%;
+      transform: translateY(-50%);
+    } @else {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+  @mixin positionBottom($type: null) {
+    position: absolute;
+    @if ($type == "x") {
+      left: 50%;
+      transform: translateX(-50%);
+    } @else if($type == "y") {
+      top: 50%;
+      transform: translateY(-50%);
+    } @else {
+      bottom: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+  @mixin fixed($type: null) {
+    position: fixed;
+    @if ($type == "x") {
+      left: 50%;
+      transform: translateX(-50%);
+    } @else if($type == "y") {
+      top: 50%;
+      transform: translateY(-50%);
+    } @else {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+//rwd @include media(max-width)
+@mixin media($screenSize) {
+    @media screen and (max-width: $screenSize) {
+      @content;
+    }
+  }
+@mixin btnReset {
+  background-color: transparent;
+  outline: none;
+  border: none;
+  cursor: pointer;
+}
