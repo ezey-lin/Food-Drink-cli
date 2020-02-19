@@ -136,7 +136,7 @@ export default {
             this.$http.get(api).then((response) => {
             console.log(response.data)
             vm.cart = response.data;
-            this.$bus.$emit('cartLeng',response.data)
+            this.$bus.$emit('cartInfo',response.data)
             console.log(vm.cart)
         })
         }

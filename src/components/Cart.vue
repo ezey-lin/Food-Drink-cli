@@ -39,7 +39,7 @@
             <div class="btnBox">
             <button class="switch" @click="showCart">
                 <i class="fas fa-shopping-cart"></i>
-                <span> {{cart.data.carts.length}} </span>
+                <span> {{cartlen}} </span>
             </button>
             </div>
         </div>
@@ -51,12 +51,13 @@ export default {
         return{
             show:false,
             cart:{
-                data:{}
+                data:{},
             },
              status:{
               fileUpLoading:false,
               rmvLoading:false,
             },
+            cartlen:0,
         }
     },
     computed:{
@@ -78,6 +79,7 @@ export default {
             vm.cart = response.data;
             // vm.status.rmvLoading = false;
             console.log(vm.cart)
+            vm.cartlen = vm.cart.data.carts.length;
         })
         },
         removeCartItem(id){
@@ -96,7 +98,7 @@ export default {
     },
     created(){
         this.getCart();
-        this.$bus.$on('cartLeng', (cartInfo) => {
+        this.$bus.$on('cartInfo', (cartInfo) => {
         this.cart = cartInfo;
         });
     }
