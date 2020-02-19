@@ -9,24 +9,24 @@
             <thead>
                 <th width='120'>分類</th>
                 <th>產品名稱</th>
-                <th width='120'>原價</th>
+                <!-- <th width='120'>原價</th> -->
                 <th width='120'>售價</th>
-                <th width='120'>是否啟用</th>
+                <!-- <th width='120'>是否啟用</th> -->
                 <th width='120'>編輯</th>
             </thead>
             <tbody>
                 <tr v-for = '(item) in products' :key="item.id">
                     <td> {{item.category}} </td>
                     <td> {{item.title}} </td>
-                    <td class="text-left">
+                    <!-- <td class="text-left">
                         {{item.origin_price | currency}}
-                    </td>
+                    </td> -->
                     <td class="text-left">
                         {{item.price | currency}}
                     </td>
                     <td>
                         <span v-if="item.is_enabled" class="text-success">啟用</span>
-                        <span>未啟用</span>
+                        <span v-if="!item.is_enabled">未啟用</span>
                     </td>
                     <td>
                         <button class="btn btn-outline-primary btn-sm" @click='openModal(false,item)'>編輯</button>
@@ -111,11 +111,11 @@
             </div>
 
             <div class="form-row">
-              <div class="form-group col-md-6">
+              <!-- <div class="form-group col-md-6">
               <label for="origin_price">原價</label>
                 <input type="number" class="form-control" id="origin_price"
                   placeholder="請輸入原價" v-model="tempProduct.origin_price">
-              </div>
+              </div> -->
               <div class="form-group col-md-6">
                 <label for="price">售價</label>
                 <input type="number" class="form-control" id="price"
@@ -137,7 +137,7 @@
             <div class="form-group">
               <div class="form-check">
                 <input class="form-check-input" type="checkbox"
-                  id="is_enabled" v-model="tempProduct.is_enable"
+                  id="is_enabled" v-model="tempProduct.is_enabled"
                   :true-value="1"
                   :fale-vale="0"
                   >
@@ -151,7 +151,8 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">取消</button>
-        <button type="button" class="btn btn-primary" @click="updateProduct">確認</button>
+        <button type="button" class="btn btn-primary" @click="updateProduct"><span
+        v-if="!status.confirmLoading">確認</span><i class="fas fa-spinner fa-spin" v-if="status.confirmLoading"></i></button>
       </div>
     </div>
   </div>
@@ -199,7 +200,8 @@ export default {
             isLoading:false,
             edit:'新增產品',
             status:{
-              fileUpLoading:false
+              fileUpLoading:false,
+              confirmLoading:false,
             },
         }
     },
@@ -257,13 +259,14 @@ export default {
             let api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/product`;
             let httpMethod = `post`
             const vm = this;
+            vm.status.confirmLoading = true;
             if(!vm.isNew){
               api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/product/${vm.tempProduct.id}`
               httpMethod = 'put'
             }
             this.$http[httpMethod](api,{ data: vm.tempProduct}).then((response) => {
             console.log(response.data)
-            // vm.products = response.data.products
+            vm.status.confirmLoading = false;
             if(response.data.success){
               $('#productModal').modal('hide');
               vm.getProducts()

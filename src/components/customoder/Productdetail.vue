@@ -8,22 +8,22 @@
             <div class="numberCheck">
                 <div class="inputs">
                     <div class="price">
-                        <span> {{singleData.price | currency}} </span>
+                        <span>PRICE : {{singleData.price | currency}} </span>
                     </div>
                     <div class="chooseNum">
                         <select name="number" id="" class="number" v-model="singleData.num">
                             <option :value="num" v-for="num in 10" :key="num"> {{num}} </option>
                         </select>
-                            <button class="addart" @click="addToCart">Add Cart</button>
+                            <button class="addCart" @click="addToCart">Add Cart</button>
                     </div>
                 </div>
                 <hr>
                 <div class="total">
-                    <span>TOTAL:{{totalPrice | currency}}</span>
+                    <span>TOTAL : {{totalPrice | currency}}</span>
                 </div>
             </div>
             <hr>
-            <p class="description">商品描述---------------------------------</p>
+            <p class="description"> Lorem ipsum dolor sit, amet consectetur adipisicing elit. Veritatis maxime doloremque aliquid reprehenderit tenetur sit pariatur </p>
         </div>
     </div>
 </template>
@@ -60,7 +60,7 @@ export default {
 .detail{
     z-index: 9999;
     width: 65vw;
-    height: 60vh;
+    height: 70vh;
     @include fixed;
     display: flex;
     background: white;
@@ -92,8 +92,9 @@ export default {
             cursor: pointer;
         }
         h4{
+            @include font(1.5);
             margin: 5px auto;
-            padding-top: 5px;
+            padding-top: 15px;
         }
         .numberCheck{
             height: 40%;
@@ -106,6 +107,7 @@ export default {
                 .price{
                     @include font(1.5);
                     margin-bottom: 10px;
+                    margin-right: 30px;
                 }
                 .chooseNum{
                     width: 100%;
@@ -119,15 +121,16 @@ export default {
                         outline: none;
                         border-radius: 10px 0 0 10px;
                     }
-                    .addart{
+                    .addCart{
                         width: 40%;
                         height: 40px;
                         @include btnReset;
-                        border: 1px solid #666;
+                        background: #666;
+                        color: white;
                         border-radius: 0 10px 10px 0;
-                        transition: .4s;
+                        transition: .3s;
                         &:hover{
-                            background: #666;
+                            background: lightblue;
                             color: white;
                         }
                     }

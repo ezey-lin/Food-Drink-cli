@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import VueSweetAlert from 'vue-sweetalert';
 import axios from 'axios';
 import VueAxios from 'vue-axios';
 import Loading from 'vue-loading-overlay';
@@ -8,9 +9,13 @@ import router from './router';
 import 'bootstrap';
 import './bus';
 import currencyFilter from './filters/currency';
+import VeeValidate from 'vee-validate'
+
+
 // import $ from 'jquery';
 axios.defaults.withCredentials = true;
-
+Vue.use(VeeValidate)
+Vue.use(VueSweetAlert)
 Vue.use(VueAxios, axios)
 Vue.config.productionTip = false
 Vue.component('Loading',Loading)

@@ -3,20 +3,17 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Dashboard from '../components/Dashboard'
 import Products from '../components/pages/products'
+import Orderlist from '../components/pages/Orderlist'
 import Login from '../components/pages/Login'
 import Customorder from '../views/Customorder'
-import Hello from '../components/HelloWorld'
+import Order from '../views/Order'
+import Customcheck from '../views/Customcheck'
 Vue.use(VueRouter)
 
 const routes = [
   {
     path:'*',
     redirect:'login'
-  },
-  {
-    name:'hello',
-    path:'/hello',
-    component:Hello,
   },
   {
     path: '/',
@@ -28,12 +25,18 @@ const routes = [
     path: '/dashboard',
     name: 'Dashboard',
     component: Dashboard,
-    // meta: { requiresAuth: true },
+    meta: { requiresAuth: true },
     children:[
       {
         path:'products',
         name:'Products',
         component:Products,
+        meta: { requiresAuth: true },
+      },
+      {
+        path:'orderlist',
+        name:'Orderlist',
+        component:Orderlist,
         meta: { requiresAuth: true },
       }
     ],
@@ -58,6 +61,17 @@ const routes = [
     name: 'Customorder',
     component: Customorder,
     // meta: { requiresAuth: true }
+  },
+  {
+    path: '/order',
+    name: 'Order',
+    component: Order,
+    // meta: { requiresAuth: true }
+  },
+  {
+    path: '/customcheck/:orderId',
+    name: 'customcheck',
+    component: Customcheck,
   },
 ]
 

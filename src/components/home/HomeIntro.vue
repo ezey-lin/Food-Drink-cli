@@ -92,7 +92,7 @@ export default {
           height: 100%;
           background: #000;
           position: absolute;
-          transition:1s;
+          transition:.8s;
           background-color: rgba(43, 61, 93, 0.6);
         }
         &:hover .picFilter{

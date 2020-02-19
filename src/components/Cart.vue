@@ -6,53 +6,40 @@
                 <div class="table">
                     <div class="thead">
                         <th></th>
-                        <th>品名</th>
-                        <th>數量</th>
-                        <th>單價</th>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
                     </div>
                     <div class="tb">
-                        <tr v-for="item in cart.data.carts" :key="item.id">
-                        <td class="align-middle">
+                        <div v-for="item in cart.data.carts" :key="item.id" class="tr">
+                        <div class="rmvBtn">
                             <button type="button" class="btn btn-outline-danger btn-sm"
                             @click="removeCartItem(item.id)">
-                            <i class="far fa-trash-alt"></i>
+                            <i class="far fa-trash-alt" v-if="status.rmvLoading != item.id"></i>
+                            <i class="fas fa-spinner fa-spin" v-if="status.rmvLoading === item.id"></i>
                             </button>
-                        </td>
+                        </div>
                         <td class="align-middle">
                             {{item.product.title }}
-                            <!-- <div class="text-success" v-if="item.coupon">
-                            已套用優惠券
-                            </div> -->
                         </td>
-                        <td class="align-middle">{{ item.qty }}/{{ item.product.uni }}</td>
-                        <td class="align-middle text-right">{{ item.final_total }}</td>
-                        </tr>
+                        <td class="align-middle">{{ item.qty }}</td>
+                        <td class="align-middle text-right">{{ item.final_total | currency }}</td>
+                        </div>
                     </div>
                     <div class="tfoot">
                         <tr>
-                        <td colspan="3" class="text-right">總計</td>
-                        <td class="text-right">{{ cart.data.total }}</td>
+                        <td colspan="3" class="text-right">Total</td>
+                        <td class="text-right">{{ cart.data.total | currency }}</td>
                         </tr>
-                        <tr>
-                        <td colspan="3" class="text-right text-success">折扣價</td>
-                        <td class="text-right text-success">{{ cart.data.final_total }}</td>
-                        </tr>
+                        <div class="checkOut" @click="goCheckOut"><button>checkout</button></div>
                     </div>
                 </div>
-                <!-- <div class="input-group mb-3 input-group-sm">
-                <input type="text" class="form-control" placeholder="請輸入優惠碼">
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button">
-                    套用優惠碼
-                    </button>
-                </div>
-                </div> -->
             </div>
             </transition>
             <div class="btnBox">
             <button class="switch" @click="showCart">
                 <i class="fas fa-shopping-cart"></i>
-                <span> {{ this.cart.data.carts.length }} </span>
+                <span> {{cart.data.carts.length}} </span>
             </button>
             </div>
         </div>
@@ -63,14 +50,20 @@ export default {
     data(){
         return{
             show:false,
-            cart:Array,
+            cart:{
+                data:{}
+            },
+             status:{
+              fileUpLoading:false,
+              rmvLoading:false,
+            },
         }
     },
     computed:{
-        len(){
-            let leng = this.cart.data.carts.length
-            return leng
-        }
+        // len(){
+        //     let leng = this.cart.data.carts.length
+        //     return leng
+        // }
     },
     methods:{
         showCart(){
@@ -80,33 +73,36 @@ export default {
         getCart(){
           const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`;
             const vm = this;
-            vm.isLoading = true
             this.$http.get(api).then((response) => {
             console.log(response.data)
-            vm.isLoading = false;
             vm.cart = response.data;
+            // vm.status.rmvLoading = false;
             console.log(vm.cart)
         })
         },
         removeCartItem(id){
           const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart/${id}`;
             const vm = this;
-            vm.isLoading = true
+            vm.status.rmvLoading = id;
             this.$http.delete(api).then((response) => {
             console.log(response.data)
-            vm.isLoading = false;
             vm.getCart()
-            // vm.cart = response.data;
-            // console.log(vm.cart)
         })
         },
+        goCheckOut(){
+            this.showCart();
+            this.$router.push('/order')
+        }
     },
     created(){
         this.getCart();
+        this.$bus.$on('cartLeng', (cartInfo) => {
+        this.cart = cartInfo;
+        });
     }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 @import '.././assets/helpers/var';
 .cart{
     position: fixed;
@@ -129,7 +125,7 @@ export default {
             height: 80px;
             border-radius: 50%;
             box-shadow: 3px 3px 5px rgba(0,0,0,.2);
-            color: white;
+            color: #666;
             background: #d6e8fa;
             padding: 15px;
             position: relative;
@@ -142,10 +138,11 @@ export default {
                 right: 5px;
                 top: 5px;
                 background: red;
+                color: white;
             }
         &:hover{
             box-shadow: 1px 1px 3px rgba(0,0,0,.2);
-            background: #c1defa;
+            background: lightblue;
         }
         }
         }
@@ -165,6 +162,37 @@ export default {
                 width: 100% ;
                 height: 350px;
                 overflow-y: scroll !important;
+                // border: 1px solid red;
+                .tr{
+                    // border: 1px solid red;
+                    display: flex;
+                    justify-content: center;
+                    position: relative;
+                    .rmvBtn{
+                        position: absolute;
+                        left: 15px;
+                        top: 20%;
+                    }
+                }
+            }
+            .checkOut{
+                position: absolute;
+                left: 10px;
+                width: 120px;
+                height: 50px;
+                button{
+                    @include btnReset;
+                    border-radius: 10px;
+                    background: #666;
+                    width: 100%;
+                    height: 100%;
+                    transition: .3s;
+                    @include font(1);
+                    color: white;
+                    &:hover{
+                        background: lightblue;
+                    }
+                }
             }
         }
     }

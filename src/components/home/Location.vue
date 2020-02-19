@@ -33,6 +33,7 @@ export default {
 .location{
     width: 100%;
     height: auto;
+    margin: 50px auto;
 }
 .locationHead{
     margin: 30px auto;

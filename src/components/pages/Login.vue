@@ -1,6 +1,6 @@
 <template>
    <form class="form-signin" @submit.prevent="signin">
-  <h1 class="h3 mb-3 font-weight-normal">請先登入</h1>
+  <h1 class="h3 mb-3 font-weight-normal">Sign In</h1>
   <label for="inputEmail" class="sr-only">Email address</label>
   <input type="email" id="inputEmail" v-model="user.username" class="form-control" placeholder="Email address" required autofocus>
   <label for="inputPassword" class="sr-only">Password</label>
@@ -12,7 +12,7 @@
 
   </div>
   <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-  <p class="mt-5 mb-3 text-muted">&copy; 2017-2019</p>
+  <p class="mt-5 mb-3 text-muted">&copy; 2019-2020</p>
 </form>
 </template>
 

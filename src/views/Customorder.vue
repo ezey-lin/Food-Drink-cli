@@ -1,13 +1,18 @@
 <template>
   <div>
-    <!-- <Navbar></Navbar>
-    <slide></slide> -->
+     <loading :active.sync="isLoading" ></loading>
     <div class="banner"></div>
     <div class="products">
-      <div class="productList"></div>
+      <div class="productList">
+        <ul>
+          <li :class="{active : categories == 'all'}" @click="categories = 'all'"><span>all</span></li>
+          <li :class="{active : categories == 'food'}" @click="categories = 'food'"><span>food</span></li>
+          <li :class="{active : categories == 'drink'}" @click="categories = 'drink'"><span>drink</span></li>
+        </ul>
+      </div>
       <div class="productMap">
         <div class="productItem" :id='product.id' 
-        v-for="product in products" :key='product.id'>
+        v-for="product in filterData" :key='product.id'>
           <div class="productImg" :style="{backgroundImage:`url(${product.imageUrl})`}"  @click="getSingle(product.id)"></div>
           <div class="productInfo">
             <div class="text">
@@ -22,6 +27,7 @@
         <transition name="fade">
         <Productdetail v-if="popup" :singleData="productSingle" @closebox="closebox" @add="add"/>
         </transition>
+        <Pagination class="pag" @getprod="getProducts" :pagedata="pagination" />
       </div>
     </div>
     <Footer></Footer>
@@ -49,16 +55,32 @@ export default {
               fileUpLoading:false
             },
             productSingle:{},
+            cart:{},
+            categories: "all",
         }
+    },
+    computed:{
+      filterData() {
+      const vm = this;
+      if (vm.categories === "all") {
+        return vm.products;
+      } else {
+        return vm.products.filter(
+          product => product.category === vm.categories
+        );
+      }
+    },
     },
     methods: {
         getProducts(page = 1){
             const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/products/?page=${page}`;
             const vm = this;
-            vm.isLoading = true
+            // vm.isLoading = true
             this.$http.get(api).then((response) => {
             console.log(response.data)
-            vm.products = response.data.products
+            vm.products = response.data.products.filter(function(item){
+              return item.is_enabled == 1
+            });
             vm.isLoading = false
             vm.pagination = response.data.pagination;
             // console.log()
@@ -67,10 +89,8 @@ export default {
         getSingle(id){
             const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/product/${id}`;
             const vm = this;
-            vm.isLoading = true
             this.$http.get(api).then((response) => {
             console.log(response.data)
-            vm.isLoading = false
             vm.productSingle = response.data.product;
             vm.popup = true;
             // vm.pagination = response.data.pagination;
@@ -85,16 +105,23 @@ export default {
           console.log(id)
            const vm = this;
             const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`;
-            vm.isLoading = true;
             const cart = {
               product_id:id,
               qty
             }
             this.$http.post(api,{data : cart}).then((response) => {
+            vm.$swal({
+            title: "",
+            type:'success',
+            text: "已加入購物車",
+            timer: 1500,
+            showConfirmButton: false
+          });
             vm.closebox();
             vm.getCart();
             console.log(response.data)
-            vm.isLoading = false;})
+            })
+             
         },
         add(obj){
           this.tempProduct = obj;
@@ -106,15 +133,16 @@ export default {
         getCart(){
           const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`;
             const vm = this;
-            vm.isLoading = true
             this.$http.get(api).then((response) => {
             console.log(response.data)
-            vm.isLoading = false
-            // console.log()
+            vm.cart = response.data;
+            this.$bus.$emit('cartLeng',response.data)
+            console.log(vm.cart)
         })
         }
     },
     created(){
+      this.$bus.$emit('cartShow',true)
         this.getProducts();
         this.getCart();
     }
@@ -128,6 +156,7 @@ export default {
 .banner{
   width: 100%;
   height: 60vh;
+  background: url(".././img/banner3.png") center;
 }
 .fade-enter-active {
   animation: coming .3s;
@@ -156,37 +185,91 @@ export default {
   }
 }
 .products{
-  border: 1px solid green;
+  // border: 1px solid green;
   // width: 100%;
   height: auto;
+  min-height: 900px;
   display: flex;
-  padding: 30px;
+  // padding: 30px;
   position: relative;
+  // justify-content: space-around;
+  @include media(769px){
+    flex-direction: column;
+  }
+
 }
 .productList{
-  width: 20%;
+  min-width: 250px;
+  max-width: 80%;
   height: 100%;
-  border: 1px solid green;
-  background: red;
+  // border: 1px solid green;
+  // background: red;
+  ul{
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    li{
+      cursor: pointer;
+      height: 50px;
+      width: 100%;
+      // border: 1px solid #666;
+      position: relative;
+      span{
+        @include font(1.3);
+        position: absolute;
+        left: 10px;
+        bottom: 5px;
+      }
+      &:after{
+        position: absolute;
+        content: '';
+        bottom: 10%;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background-image: linear-gradient(to right, transparent,aquamarine);
+        transition: width .3s;
+      }
+      &:hover{
+        color: aquamarine;
+      }
+      &:hover::after{
+        width: 100%;
+      }
+      &.active {
+          span{
+            color: aquamarine;
+          }
+          &::after {
+              width: 100%;
+          }
+      }
+    }
+  }
 }
 .productMap{
-  width: 80%;
+  min-width: 50%;
+  max-width: 100%;
   height: 100%;
-  border: 1px solid green;
-  // background: #000;
+  // border: 1px solid green;
   padding: 20px;
+  padding-bottom: 80px;
   display: flex;
   flex-wrap: wrap;
+  position: relative;
   .productItem{
-    width: 30%;
+    // width: 20%;
     max-width: 350px;
-    min-width: 230px;
-    height: 400px;
+    min-width: 220px;
+    height: 360px;
     border-radius: 20px;
     transition: .5s;
     box-shadow: 1px 1px 3px rgba(85,85,85,.5);
     margin: 10px;
-    margin-right: 20px;
+    @include media(769px){
+      width: 90%;
+      margin: 10px auto;
+    }
     cursor: pointer;
     z-index: 9;
     &:hover{
@@ -206,7 +289,8 @@ export default {
       position: relative;
       border-radius:0 0 20px 20px;
       .text{
-        @include font(1.2);
+        @include font(1.1);
+        line-height: 1.5;
         width: 100%;
         display: flex;
         flex-direction: column;
@@ -241,6 +325,15 @@ export default {
         border-radius: 0 0 20px 20px;
       }
     }
+  }
+    .pag{
+    // width: 100px;
+    // height: 50px;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    // border: 1px solid red;
   }
 }
 .categories{

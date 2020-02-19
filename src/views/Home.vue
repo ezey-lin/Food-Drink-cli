@@ -14,7 +14,6 @@
 <script>
 // @ is an alias to /src
 import $ from 'jquery';
-import HelloWorld from '@/components/HelloWorld'
 import Banner from '../components/home/Banner'
 import HomeIntro from '../components/home/HomeIntro'
 import Newproduct from '../components/home/Newproduct'
@@ -23,15 +22,14 @@ import Location from '../components/home/Location'
 export default {
   name: 'Home',
   components: {
-    HelloWorld,
     Banner,
     HomeIntro,
     Newproduct,
     Location
   },
-    mounted(){
-
-  },
+  created(){
+    this.$bus.$emit('cartShow',true);
+  }
 }
 </script>
 
