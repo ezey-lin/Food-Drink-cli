@@ -76,7 +76,6 @@ export default {
             this.$http.get(api).then((response) => {
             console.log(response.data)
             vm.cart = response.data;
-            // vm.status.rmvLoading = false;
             console.log(vm.cart)
         })
         },
