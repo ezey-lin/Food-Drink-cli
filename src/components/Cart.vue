@@ -62,8 +62,7 @@ export default {
     },
     computed:{
         // len(){
-        //     let leng = this.cart.data.carts.length
-        //     return leng
+        //     return this.cart.data.carts.length
         // }
     },
     methods:{
@@ -75,11 +74,10 @@ export default {
           const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`;
             const vm = this;
             this.$http.get(api).then((response) => {
-            console.log(response.data)
+            // console.log(response.data)
             vm.cart = response.data;
             // vm.status.rmvLoading = false;
-            console.log(vm.cart)
-            vm.cartlen = vm.cart.data.carts.length;
+            // console.log(vm.cart)
         })
         },
         removeCartItem(id){
@@ -87,7 +85,8 @@ export default {
             const vm = this;
             vm.status.rmvLoading = id;
             this.$http.delete(api).then((response) => {
-            console.log(response.data)
+            vm.cartlen --;
+            // console.log(response.data)
             vm.getCart()
         })
         },
@@ -99,7 +98,8 @@ export default {
     created(){
         this.getCart();
         this.$bus.$on('cartInfo', (cartInfo) => {
-        this.cart = cartInfo;
+        this.cartlen = cartInfo.data.carts.length;
+        // console.log(cartInfo)
         });
     }
 }

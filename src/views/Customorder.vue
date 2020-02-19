@@ -1,6 +1,6 @@
 <template>
   <div>
-     <loading :active.sync="isLoading" ></loading>
+     <!-- <loading :active.sync="isLoading" ></loading> -->
     <div class="banner"></div>
     <div class="products">
       <div class="productList">
@@ -77,7 +77,7 @@ export default {
             const vm = this;
             // vm.isLoading = true
             this.$http.get(api).then((response) => {
-            console.log(response.data)
+            // console.log(response.data)
             vm.products = response.data.products.filter(function(item){
               return item.is_enabled == 1
             });
@@ -90,7 +90,7 @@ export default {
             const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/product/${id}`;
             const vm = this;
             this.$http.get(api).then((response) => {
-            console.log(response.data)
+            // console.log(response.data)
             vm.productSingle = response.data.product;
             vm.popup = true;
             // vm.pagination = response.data.pagination;
@@ -101,29 +101,23 @@ export default {
           this.popup = false;
         },
         addToCart(id,qty = 1){
-          console.log('123')
-          console.log(id)
-           const vm = this;
+          //卡片內層加入購物車
+            // console.log(id)
+            const vm = this;
             const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`;
             const cart = {
               product_id:id,
               qty
             }
             this.$http.post(api,{data : cart}).then((response) => {
-            vm.$swal({
-            title: "",
-            type:'success',
-            text: "已加入購物車",
-            timer: 1500,
-            showConfirmButton: false
-          });
-            vm.closebox();
             vm.getCart();
-            console.log(response.data)
+            // console.log(response.data)
+            this.$bus.$emit('message:push',response.data.message,'success')
             })
-             
+            vm.closebox();
         },
         add(obj){
+          //卡片外層加入購物車
           this.tempProduct = obj;
           // console.log(this.tempProduct)
           const id = this.tempProduct.id
@@ -134,10 +128,10 @@ export default {
           const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`;
             const vm = this;
             this.$http.get(api).then((response) => {
-            console.log(response.data)
+            // console.log(response.data)
             vm.cart = response.data;
             this.$bus.$emit('cartInfo',response.data)
-            console.log(vm.cart)
+            // console.log(vm.cart)
         })
         }
     },

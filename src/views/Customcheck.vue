@@ -101,13 +101,7 @@ export default {
   created() {
     this.orderId = this.$route.params.orderId;
     console.log(this.orderId);
-    vm.$swal({
-            title: "",
-            type:'success',
-            text: "建立訂單成功",
-            timer: 1500,
-            showConfirmButton: false
-          });
+    this.$bus.$emit('cartShow',false)
     this.getOrder();
   },
 

@@ -122,7 +122,9 @@
 export default {
         data(){
           return {
-            cart:Array,
+            cart:{
+              data:{}
+            },
             form: {
               user: {
                 name: "",
@@ -141,13 +143,13 @@ export default {
             const vm = this;
             vm.isLoading = true;
             this.$http.get(api).then((response) => {
-            console.log(response.data)
+            // console.log(response.data)
             // vm.isLoading = false;
             setTimeout(() => {
             this.isLoading = false
             },800)
             vm.cart = response.data;
-            console.log(vm.cart)
+            // console.log(vm.cart)
         })
         },
         removeCartItem(id){
@@ -155,7 +157,7 @@ export default {
             const vm = this;
             vm.isLoading = true;
             this.$http.delete(api).then((response) => {
-            console.log(response.data)
+            // console.log(response.data)
             vm.isLoading = false;
             vm.getCart()
         })
