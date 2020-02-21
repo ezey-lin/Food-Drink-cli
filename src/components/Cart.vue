@@ -39,7 +39,7 @@
             <div class="btnBox">
             <button class="switch" @click="showCart">
                 <i class="fas fa-shopping-cart"></i>
-                <span> {{cartLen}} </span>
+                <span> {{cart.data.carts.length}} </span>
             </button>
             </div>
         </div>
@@ -51,13 +51,14 @@ export default {
         return{
             show:false,
             cart:{
-                data:{}
+                data:{
+                    carts:{},
+                }
             },
              status:{
               fileUpLoading:false,
               rmvLoading:false,
             },
-            cartLen:0,
         }
     },
     methods:{
@@ -80,7 +81,6 @@ export default {
             vm.status.rmvLoading = id;
             this.$http.delete(api).then((response) => {
             console.log(response.data)
-            vm.cartLen --;
             vm.getCart()
         })
         },
@@ -92,7 +92,8 @@ export default {
     created(){
         this.getCart();
         this.$bus.$on('cartLeng', (cartInfo) => {
-        this.cartLen = cartInfo.data.carts.length;
+        //由卡片傳進來的加入購物車資訊
+        this.cart = cartInfo;
         });
     }
 }
