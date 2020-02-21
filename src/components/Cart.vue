@@ -39,7 +39,7 @@
             <div class="btnBox">
             <button class="switch" @click="showCart">
                 <i class="fas fa-shopping-cart"></i>
-                <span> {{cart.data.carts.length}} </span>
+                <span> {{cartLen}} </span>
             </button>
             </div>
         </div>
@@ -57,13 +57,8 @@ export default {
               fileUpLoading:false,
               rmvLoading:false,
             },
+            cartLen:0,
         }
-    },
-    computed:{
-        // len(){
-        //     let leng = this.cart.data.carts.length
-        //     return leng
-        // }
     },
     methods:{
         showCart(){
@@ -85,6 +80,7 @@ export default {
             vm.status.rmvLoading = id;
             this.$http.delete(api).then((response) => {
             console.log(response.data)
+            vm.cartLen --;
             vm.getCart()
         })
         },
@@ -96,7 +92,7 @@ export default {
     created(){
         this.getCart();
         this.$bus.$on('cartLeng', (cartInfo) => {
-        this.cart = cartInfo;
+        this.cartLen = cartInfo.data.carts.length;
         });
     }
 }
